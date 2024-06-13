@@ -1,10 +1,11 @@
 import { Octokit } from "@octokit/core";
 import { paginateRest } from "@octokit/plugin-paginate-rest";
 import { restEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
+import { RestEndpointMethods } from "@octokit/plugin-rest-endpoint-methods/dist-types/generated/parameters-and-response-types";
 import fs from 'fs';
 import readline from 'readline';
 
-type ExtendedOctokit = Octokit & { paginate: typeof paginateRest; rest: ReturnType<typeof restEndpointMethods> };
+type ExtendedOctokit = Octokit & { paginate: typeof paginateRest; rest: RestEndpointMethods };
 
 export async function getCommitters(octokit: ExtendedOctokit, owner: string, repo: string, pullNumber: number): Promise<Set<string>> {
   const committers = new Set<string>();
