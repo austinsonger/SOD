@@ -4,9 +4,9 @@ import { getCommitters, getApprovers, requestReviewer, parseCodeownersFile, find
 import { Octokit } from "@octokit/core";
 import { paginateRest } from "@octokit/plugin-paginate-rest";
 import { restEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
-import { Api } from "@octokit/plugin-rest-endpoint-methods/dist-types/types";
+import { RestEndpointMethods } from "@octokit/plugin-rest-endpoint-methods/dist-types/generated/parameters-and-response-types";
 
-type ExtendedOctokit = Octokit & { paginate: typeof paginateRest; rest: ReturnType<typeof restEndpointMethods> };
+type ExtendedOctokit = Octokit & { paginate: typeof paginateRest; rest: RestEndpointMethods };
 
 const MyOctokit = Octokit.plugin(paginateRest, restEndpointMethods);
 
@@ -15,7 +15,7 @@ async function run() {
     const token = core.getInput('github-token');
     const codeownersFile = core.getInput('codeowners-file');
 
-    const octokit = new MyOctokit({ auth: token }) as any as ExtendedOctokit;
+    const octokit = new MyOctokit({ auth: token }) as ExtendedOctokit;
     const context = github.context;
     const pullRequest = context.payload.pull_request;
 
