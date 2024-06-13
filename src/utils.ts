@@ -1,4 +1,4 @@
-mport { Octokit } from "@octokit/core";
+import { Octokit } from "@octokit/core";
 import { paginateRest } from "@octokit/plugin-paginate-rest";
 import { restEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
 import fs from 'fs';
