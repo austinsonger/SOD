@@ -4,7 +4,7 @@ import { getCommitters, getApprovers, requestReviewer, parseCodeownersFile, find
 
 async function run() {
   try {
-    const token = core.getInput('token');
+    const token = core.getInput('github-token');
     const codeownersFile = core.getInput('codeowners-file');
     
     const octokit = github.getOctokit(token);
