@@ -1,10 +1,10 @@
-import { Octokit } from "@octokit/core";
+mport { Octokit } from "@octokit/core";
 import { paginateRest } from "@octokit/plugin-paginate-rest";
 import { restEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
 import fs from 'fs';
 import readline from 'readline';
 
-type ExtendedOctokit = Octokit & { paginate: typeof paginateRest } & { rest: ReturnType<typeof restEndpointMethods> };
+type ExtendedOctokit = Octokit & { paginate: typeof paginateRest; rest: ReturnType<typeof restEndpointMethods> };
 
 export async function getCommitters(octokit: ExtendedOctokit, owner: string, repo: string, pullNumber: number): Promise<Set<string>> {
   const committers = new Set<string>();
@@ -13,13 +13,13 @@ export async function getCommitters(octokit: ExtendedOctokit, owner: string, rep
     repo,
     pull_number: pullNumber
   });
-  
+
   for (const commit of commits.data) {
     if (commit.author) {
       committers.add(commit.author.login);
     }
   }
-  
+
   return committers;
 }
 
@@ -43,14 +43,14 @@ export async function parseCodeownersFile(filePath: string): Promise<{ username:
     input: fileStream,
     crlfDelay: Infinity
   });
-  
+
   for await (const line of rl) {
     if (line.trim() && !line.startsWith('#')) {
       const [username, role] = line.split(',');
       codeowners.push({ username: username.trim(), role: parseInt(role.trim()) });
     }
   }
-  
+
   return codeowners;
 }
 
@@ -60,12 +60,12 @@ export function findEligibleApprover(codeowners: { username: string, role: numbe
       return username;
     }
   }
-  
+
   for (const { username, role } of codeowners) {
     if (role === 1 && !committers.has(username)) {
       return username;
     }
   }
-  
+
   return null;
 }
