@@ -15,7 +15,7 @@ async function run() {
     const token = core.getInput('github-token');
     const codeownersFile = core.getInput('codeowners-file');
 
-    const octokit = new MyOctokit({ auth: token });
+    const octokit = new MyOctokit({ auth: token }) as any as ExtendedOctokit;
     const context = github.context;
     const pullRequest = context.payload.pull_request;
 
@@ -24,7 +24,7 @@ async function run() {
       return;
     }
 
-    const committers = await getCommitters(octokit as ExtendedOctokit, context.repo.owner, context.repo.repo, pullRequest.number);
+    const committers = await getCommitters(octokit, context.repo.owner, context.repo.repo, pullRequest.number);
     const approvers = getApprovers(pullRequest);
     const ineligibleApprovers = approvers.filter(approver => committers.has(approver));
 
@@ -40,7 +40,7 @@ async function run() {
       return;
     }
 
-    await requestReviewer(octokit as ExtendedOctokit, context.repo.owner, context.repo.repo, pullRequest.number, eligibleApprover);
+    await requestReviewer(octokit, context.repo.owner, context.repo.repo, pullRequest.number, eligibleApprover);
 
     core.info(`Assigned new approver: @${eligibleApprover}`);
   } catch (error) {
