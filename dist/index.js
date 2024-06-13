@@ -26,11 +26,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const github = __importStar(require("@actions/github"));
 const utils_1 = require("./utils");
+const core_1 = require("@octokit/core");
+const plugin_paginate_rest_1 = require("@octokit/plugin-paginate-rest");
+const plugin_rest_endpoint_methods_1 = require("@octokit/plugin-rest-endpoint-methods");
+const MyOctokit = core_1.Octokit.plugin(plugin_paginate_rest_1.paginateRest, plugin_rest_endpoint_methods_1.restEndpointMethods);
 async function run() {
     try {
         const token = core.getInput('github-token');
         const codeownersFile = core.getInput('codeowners-file');
-        const octokit = github.getOctokit(token);
+        const octokit = new MyOctokit({ auth: token });
         const context = github.context;
         const pullRequest = context.payload.pull_request;
         if (!pullRequest) {
@@ -53,7 +57,12 @@ async function run() {
         core.info(`Assigned new approver: @${eligibleApprover}`);
     }
     catch (error) {
-        core.setFailed(error.message);
+        if (error instanceof Error) {
+            core.setFailed(error.message);
+        }
+        else {
+            core.setFailed("Unknown error occurred");
+        }
     }
 }
 run();
