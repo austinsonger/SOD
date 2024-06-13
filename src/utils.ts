@@ -11,7 +11,9 @@ export async function getCommitters(octokit: Octokit, owner: string, repo: strin
   });
   
   for (const commit of commits.data) {
-    committers.add(commit.author.login);
+    if (commit.author) {
+      committers.add(commit.author.login);
+    }
   }
   
   return committers;
