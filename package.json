@@ -2,9 +2,12 @@
   "name": "sodbuddy",
   "version": "1.0.0",
   "description": "Enforces segregation of duties by checking the CODEOWNERS file and ensuring that no committer can approve or merge their own code.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "package": "ncc build",
+    "all": "npm run build && npm run package",
+    "test": "jest"
   },
   "keywords": [
     "github",
@@ -13,9 +16,16 @@
     "segregation-of-duties"
   ],
   "author": "Your Name",
-  "license": "ISC",
   "dependencies": {
     "@actions/core": "^1.6.0",
-    "@actions/github": "^5.0.0"
-  }
+    "@actions/github": "^5.0.0",
+    "@vercel/ncc": "^0.27.0"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.37",
+    "typescript": "^4.2.4",
+    "jest": "^26.6.3",
+    "@types/jest": "^26.0.22"
+  },
+  "license": "MIT"
 }
