@@ -1,8 +1,12 @@
-import { Octokit } from '@octokit/rest';
+import { Octokit } from "@octokit/core";
+import { paginateRest } from "@octokit/plugin-paginate-rest";
+import { restEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
 import fs from 'fs';
 import readline from 'readline';
 
-export async function getCommitters(octokit: Octokit, owner: string, repo: string, pullNumber: number): Promise<Set<string>> {
+type ExtendedOctokit = Octokit & { paginate: typeof paginateRest } & { rest: ReturnType<typeof restEndpointMethods> };
+
+export async function getCommitters(octokit: ExtendedOctokit, owner: string, repo: string, pullNumber: number): Promise<Set<string>> {
   const committers = new Set<string>();
   const commits = await octokit.rest.pulls.listCommits({
     owner,
@@ -23,7 +27,7 @@ export function getApprovers(pullRequest: any): string[] {
   return pullRequest.requested_reviewers.map((reviewer: any) => reviewer.login);
 }
 
-export async function requestReviewer(octokit: Octokit, owner: string, repo: string, pullNumber: number, reviewer: string): Promise<void> {
+export async function requestReviewer(octokit: ExtendedOctokit, owner: string, repo: string, pullNumber: number, reviewer: string): Promise<void> {
   await octokit.rest.pulls.requestReviewers({
     owner,
     repo,
