@@ -9,12 +9,11 @@ inputs:
     required: true
     default: ${{ github.token }}
   codeowners-file:
-    description: 'Path to the CODEOWNERS.md file'
+    description: 'Path to the CODEOWNERS file'
     required: true
-
 runs:
   using: 'node12'
-  main: 'index.js'
+  main: 'dist/index.js'
 
 
 
