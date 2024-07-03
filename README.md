@@ -10,6 +10,61 @@
 Create a workflow file in your repository (e.g., `.github/workflows/enforce_sod.yml`) with the following content:
 
 ```yaml
+name: Enforce Segregation of Duties
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  enforce_sod:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install jq and yq
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq
+        sudo snap install yq
+
+    - name: Run Segregation of Duties Check
+      id: sod_check
+      run: |
+        APPROVER_FILE=".github/approvers.yml"
+        COMMITTERS=$(jq -r '.commits | .[].author.username' $GITHUB_EVENT_PATH | sort | uniq)
+        PRIMARY_APPROVERS=$(yq '.approvers[] | select(.number == 0) | .username' $APPROVER_FILE)
+        SECONDARY_APPROVERS=$(yq '.approvers[] | select(.number == 1) | .username' $APPROVER_FILE)
+
+        echo "Committers: $COMMITTERS"
+        echo "Primary Approvers: $PRIMARY_APPROVERS"
+        echo "Secondary Approvers: $SECONDARY_APPROVERS"
+
+        for approver in $PRIMARY_APPROVERS; do
+          if [[ ! " $COMMITTERS " =~ " $approver " ]]; then
+            echo "Found primary approver: $approver"
+            exit 0
+          fi
+        done
+
+        for approver in $SECONDARY_APPROVERS; do
+          if [[ ! " $COMMITTERS " =~ " $approver " ]]; then
+            echo "Found secondary approver: $approver"
+            exit 0
+          fi
+        done
+
+        echo "No eligible approver found"
+        exit 1
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 ```
 
 - **Inputs** - `GITHUB_TOKEN:` - The GitHub token for authentication (required).
