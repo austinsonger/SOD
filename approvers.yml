@@ -1,0 +1,14 @@
+approvers:
+  - username: "username1"
+    number: 1
+  - username: "username2"
+    number: 0
+  - username: "username3"
+    number: 0
+  - username: "username4"
+    number: 0
+  - username: "username5"
+    number: 1
+  - username: "username6"
+    number: 1
+    
