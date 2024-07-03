@@ -1,7 +1,6 @@
-> [Not Production Ready]
+> PROOF OF CONCEPT
 
-
-# Segregation of Duties (SODBuddy) Github Action
+# Segregation of Duties (SOD) Github Action
 
 > This GitHub Action enforces segregation of duties by checking the APPROVER file and ensuring that no committer can approve or merge their own code.
 
